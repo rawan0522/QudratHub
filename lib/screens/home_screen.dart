@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:project/screens/add_job_screen.dart';
 import 'package:project/screens/approved_screen.dart';
 import 'package:project/screens/job_list_screen.dart';
+import 'package:project/screens/pending_screen.dart';
+import 'package:project/screens/rejected_screen.dart';
 import 'package:project/screens/requests_screen.dart';
+
 
 import '../widgets/custom_drawer_widget.dart';
 
@@ -11,25 +14,22 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight =
-        MediaQuery.of(context).size.height; // الحصول على ارتفاع الشاشة
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      drawer: CustomDrawer(), // ✅ إضافة الدروار هنا لعرض القائمة الجانبية
+      drawer: CustomDrawer(),
       body: Column(
         children: [
-          _buildCustomAppBar(screenHeight), // تمرير ارتفاع الشاشة
+          _buildCustomAppBar(screenHeight),
           Expanded(
             child: Column(
               children: [
                 Expanded(
                   flex: 2,
                   child: GridView(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 25),
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
                     shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
@@ -37,8 +37,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     children: [
                       InkWell(
-                        child: _buildGridItem(
-                            "Add Job", Icons.add_box, Colors.blue),
+                        child: _buildGridItem("Add Job", Icons.add_box, Colors.blue),
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -54,18 +53,15 @@ class HomeScreen extends StatelessWidget {
                             )),
                       ),
                       InkWell(
-                        child: _buildGridItem("Requests",
-                            Icons.notifications_active, Colors.orange),
+                        child: _buildGridItem("Requests", Icons.notifications_active, Colors.orange),
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const EmployeeAttendanceScreen(),
+                              builder: (context) => const EmployeeAttendanceScreen(),
                             )),
                       ),
                       InkWell(
-                        child: _buildGridItem(
-                            "Approved", Icons.check_circle, Colors.purple),
+                        child: _buildGridItem("Approved", Icons.check_circle, Colors.purple),
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -81,13 +77,10 @@ class HomeScreen extends StatelessWidget {
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
-                      _buildListItem("Job Listings", Icons.list, Colors.purple),
-                      _buildListItem("Pending Requests", Icons.hourglass_empty,
-                          Colors.orange),
-                      _buildListItem("Approved Requests", Icons.check_circle,
-                          Colors.green),
-                      _buildListItem(
-                          "Rejected Requests", Icons.cancel, Colors.red),
+                      _buildListItem("Job Listings", Icons.list, Colors.purple, context, const JobHomePage()),
+                      _buildListItem("Pending Requests", Icons.hourglass_empty, Colors.orange, context,  EmployeePendingScreen()),
+                      _buildListItem("Approved Requests", Icons.check_circle, Colors.green, context,  ApprovedScreen()),
+                      _buildListItem("Rejected Requests", Icons.cancel, Colors.red, context, EmployeeRejectedScreen()),
                     ],
                   ),
                 ),
@@ -118,26 +111,19 @@ class HomeScreen extends StatelessWidget {
                 Builder(
                   builder: (context) => IconButton(
                     icon: const Icon(Icons.menu, color: Colors.white, size: 28),
-                    onPressed: () => Scaffold.of(context)
-                        .openDrawer(), // ✅ يفتح الدروار عند الضغط
+                    onPressed: () => Scaffold.of(context).openDrawer(),
                   ),
                 ),
                 const Column(
                   children: [
-                    Text("Company ",
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
-                    Text("Management",
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600)),
+                    Text("Company ", style: TextStyle(fontSize: 20, color: Colors.white)),
+                    Text("Management", style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600)),
                   ],
                 ),
                 Stack(
                   children: [
                     IconButton(
-                        icon: const Icon(Icons.notifications,
-                            color: Colors.white, size: 28),
+                        icon: const Icon(Icons.notifications, color: Colors.white, size: 28),
                         onPressed: () {}),
                     Positioned(
                       right: 10,
@@ -145,8 +131,7 @@ class HomeScreen extends StatelessWidget {
                       child: Container(
                         height: screenHeight * 0.012,
                         width: screenHeight * 0.012,
-                        decoration: const BoxDecoration(
-                            color: Colors.orange, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
                       ),
                     ),
                   ],
@@ -187,11 +172,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListItem(String title, IconData icon, Color color) {
+  Widget _buildListItem(String title, IconData icon, Color color, BuildContext context, Widget screen) {
     return Card(
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+        borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -199,11 +183,9 @@ class HomeScreen extends StatelessWidget {
         ),
         child: ListTile(
           leading: Icon(icon, size: 30, color: color),
-          title: Text(title,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          title: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          onTap: () {},
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
         ),
       ),
     );
